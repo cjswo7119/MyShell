@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    // 안녕 난 현복이야.ㄴㅇㄹㄴㅇㄹ
+    // 안녕 난 현복이야.ㄴㅇㄹㄴㅇㄹsdfsdfsdfsdf
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
