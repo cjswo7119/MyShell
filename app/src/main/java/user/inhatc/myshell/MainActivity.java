@@ -25,14 +25,14 @@ public class MainActivity extends AppCompatActivity{
         myDB = this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
 
         myDB.execSQL("Create table if not exists User (Id text not null primary key, Password text not null, " +
-                "Nickname text not null, Name text not null, Birth Integer not null, " +
+                "Name text not null, Nickname text not null, Birth Integer not null, " +
                 "Email text not null, Cntworry Integer not null, Lastlogin text not null);");
         /*
         * -User Table
         * Id : 아이디, 텍스트, 기본키
         * Password : 비밀번호, 텍스트
-        * Nickname : 닉네임, 텍스트
         * Name : 이름, 텍스트
+        * Nickname : 별명, 텍스트
         * Birth : 생년월일, 숫자
         * Email : 이메일주소, 텍스트
         * Cntworry : 받은고민의수, 숫자
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity{
         * */
 
         myDB.execSQL("Create table if not exists Worry (Worryno Integer primary key autoincrement, Title text not null, " +
-                    "Content text not null, Date text not null, Writer text not null, State text not null);");
+                    "Content text not null, Date text not null, Writer text not null);");
         /*
          * -Worry Table
          * Worryno : 고민번호, 숫자, 기본키
@@ -48,26 +48,28 @@ public class MainActivity extends AppCompatActivity{
          * Content : 고민내용, 텍스트
          * Date : 고민작성일, 텍스트
          * Writer : 고민작성자, 텍스트
-         * State : 답변유무, 텍스트, T:작성됨, F:작성되지않음
          * */
 
         myDB.execSQL("Create table if not exists Answer (Answerno Integer not null primary key, Worryno Integer not null, " +
-                    "Content text not null, Date text not null, Writer text not null);");
+                    "Title text not null, Content text not null, Date text not null, Writer text not null);");
 
         /*
          * -Answer Table
          * Answerno : 답변번호, 숫자, 기본키
          * Worryno : 고민번호, 숫자
+         * Title : 고민제목, 텍스트
          * Content : 답변내용, 텍스트
          * Date : 답변작성일, 텍스트
          * Writer : 답변작성자, 텍스트
          * */
 
-        myDB.execSQL("Create table if not exists Worrymatch (Matchno Integer not null primary key, Id text, Worryno Integer not null);");
+        myDB.execSQL("Create table if not exists Worrymatch (Matchno Integer not null primary key, Worryno Integer not null, Id text not null, Iswrited text not null);");
         /*
          * -WorryMatch Table
-         * Id : 아이디
+         * Matchno : 매치번호
          * Worryno : 고민번호
+         * Id : 아이디
+         * Iswrited : 작성유무 (T:답변작성완료, F:답변미작성)
          * */
 
         Button btn_join = (Button)findViewById(R.id.btn_join);
