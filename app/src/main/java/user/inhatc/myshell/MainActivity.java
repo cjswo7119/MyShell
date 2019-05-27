@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity{
          * Writer : 답변작성자, 텍스트
          * */
 
-        myDB.execSQL("Create table if not exists Worrymatch (Id text not null primary key, Worryno Integer not null);");
+        myDB.execSQL("Create table if not exists Worrymatch (Matchno Integer not null primary key, Id text, Worryno Integer not null);");
         /*
          * -WorryMatch Table
          * Id : 아이디
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity{
         public void onClick(View v) {
             EditText edt_id = (EditText)findViewById(R.id.edt_id);
             String Id = edt_id.getText().toString();
-            Cursor idRCD = myDB.query("User", null, "Id = '"+Id+"'", null, null, null, null, null);
+            Cursor idRCD = myDB.query("User", null, "Id='"+Id+"'", null, null, null, null, null);
             if (!idRCD.moveToFirst()) { // 아이디가 존재하지 않다면
                 Toast.makeText(MainActivity.this, "아이디가 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
             } else { // 아이디가 존재하는 경우
@@ -97,7 +97,8 @@ public class MainActivity extends AppCompatActivity{
                 String Password = edt_password.getText().toString();
                 if(idRCD.getString(1).equals(Password)) { // 패스워드 일치
                     Intent loginIntent = new Intent(MainActivity.this, HomeActivity.class);
-                    startActivity(loginIntent);
+                    loginIntent.putExtra("ID", Id); // 아이디 전달
+                    startActivityForResult(loginIntent,1);
                 } else { // 패스워드 불일치
                     Toast.makeText(MainActivity.this, "패스워드가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                 }
