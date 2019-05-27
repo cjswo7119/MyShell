@@ -67,8 +67,7 @@ public class HomeActivity extends AppCompatActivity
         Cursor worryRCD = myDB.query("Worrymatch", new String[] {"Worryno"}, "Id='"+strID+"'", null, null, null, null, null);
         // select Worryno from Worrymatch where Id = '아이디'
 
-        ImageView[] worries = new ImageView[10]; // 이미지 객체 배열 생성
-
+        Shell[] worries = new Shell[10]; // 이미지 객체 배열 생성
         for (int i=0 ; i<worries.length ; i++) {
             if (i==0) {
                 if (!worryRCD.moveToFirst()) break;
@@ -76,8 +75,18 @@ public class HomeActivity extends AppCompatActivity
                 if (!worryRCD.moveToNext()) break;
             }
 
-            worries[i] = new ImageView(this);
+            int worryNo = worryRCD.getInt(0);
+
+            worries[i] = new Shell(this);
             worries[i].setImageResource(R.drawable.shell);
+
+            worryRCD = myDB.query("Worry", null, "Worryno = '" + Integer.toString(worryNo) + "'", null, null, null, null, null);
+            worries[i].setWorryNo(worryRCD.getInt(0));
+            worries[i].setTitle(worryRCD.getString(1));
+            worries[i].setContent(worryRCD.getString(2));
+            worries[i].setDate(worryRCD.getString(3));
+            worries[i].setWriter(worryRCD.getString(4));
+
 
             Random random = new Random(); // 랜덤 객체 선언
 
@@ -86,9 +95,9 @@ public class HomeActivity extends AppCompatActivity
             display.getSize(size);
             int width = size.x;  // 안드로이드 화면의 가로 길이
             int height = size.y; // 안드로이드 화면의 세로 길이
-            Toast.makeText(this, Integer.toString(width) + '*' + Integer.toString(height), Toast.LENGTH_SHORT).show();
-            worries[i].setX(random.nextInt(width) - worries[i].getWidth());                        // X축 범위 : 0   ~ 화면 크기
-            worries[i].setY(random.nextInt(height - width/4+1) + width/4 - worries[i].getHeight());    // Y축 범위 : 280 ~ 화면 크기
+
+            worries[i].setX(random.nextInt(width - worries[i].getWidth()) - worries[i].getWidth()/2);                                   // X축 범위 : 0   ~ 화면 크기
+            worries[i].setY(random.nextInt(height - height/11 + 1 - worries[i].getHeight()) + height/11 - worries[i].getHeight()/2);    // Y축 범위 : 280 ~ 화면 크기
             addContentView(worries[i], new DrawerLayout.LayoutParams(width/6, height/6));
         }
     }
