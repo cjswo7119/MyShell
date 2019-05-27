@@ -16,7 +16,8 @@
         android:hint="Name"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtPWCheck" />
+        app:layout_constraintTop_toBottomOf="@+id/txtPWCheck"
+        android:maxLength="20"/>
 
     <EditText
         android:id="@+id/txtID"
@@ -28,7 +29,10 @@
         android:hint="ID"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:privateImeOptions="defaultInputmode=english"
+        android:maxLength="14"
+        android:digits="abcdefghijklmnopqrstuvwxyz1234567890-_" />
 
     <EditText
         android:id="@+id/txtPW"
@@ -40,7 +44,10 @@
         android:hint="Password"
         android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtID" />
+        app:layout_constraintTop_toBottomOf="@+id/txtID"
+        android:privateImeOptions="defaultInputmode=english;"
+        android:maxLength="19"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890&amp;&lt;&gt;&apos;&quot;`~!@#$%^*()-_=+{}[]:;,.?/\|"/>
 
     <EditText
         android:id="@+id/txtPWCheck"
@@ -52,7 +59,10 @@
         android:hint="Check PW"
         android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtPW" />
+        app:layout_constraintTop_toBottomOf="@+id/txtPW"
+        android:privateImeOptions="defaultInputmode=english;"
+        android:maxLength="19"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890&amp;&lt;&gt;&apos;&quot;`~!@#$%^*()-_=+{}[]:;,.?/\|"/>
 
     <EditText
         android:id="@+id/txtNickname"
@@ -64,7 +74,8 @@
         android:hint="NickName"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtName" />
+        app:layout_constraintTop_toBottomOf="@+id/txtName"
+        android:maxLength="20"/>
 
     <Spinner
         android:id="@+id/spnYear"
@@ -103,7 +114,9 @@
         android:hint="e-mail"
         android:inputType="textEmailAddress"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spnYear" />
+        app:layout_constraintTop_toBottomOf="@+id/spnYear"
+        android:maxLength="50"
+        android:digits="abcdefghijklmnopqrstuvwxyz1234567890-_@." />
 
     <TextView
         android:id="@+id/lblError"
@@ -137,12 +150,12 @@
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
         android:text="Magic Shell 회원가입"
+        android:textAlignment="center"
         android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="88dp" />
 
 </android.support.constraint.ConstraintLayout>
