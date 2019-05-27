@@ -1,8 +1,15 @@
 package user.inhatc.myshell;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.view.Display;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,9 +19,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Random;
+
 /////
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +42,7 @@ public class HomeActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Toast.makeText(HomeActivity.this, "새로고침 하였습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -40,6 +54,46 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Intent callIntent = getIntent();
+        String strID = callIntent.getStringExtra("ID"); // 전달받은 ID값
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.textView);
+        navUsername.setText(strID + " 님"); // 환영합니다 ID 님
+
+        // 고민 출력
+        SQLiteDatabase myDB = this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
+
+        Cursor worryRCD = myDB.query("Worrymatch", new String[] {"Worryno"}, "Id='"+strID+"'", null, null, null, null, null);
+        ImageView[] worries = new ImageView[10]; // 이미지 객체 배열 생성
+        int index;
+        for (index=0 ; index<worries.length ; index++) {
+            worries[index] = new ImageView(this);
+            worries[index].setImageResource(R.drawable.shell);
+        }
+        index = 0;
+        do {
+            if (worryRCD.moveToFirst()) { // 고민이 존재한다면
+                //worries.setBounds(50, 50, 100, 100);
+                //worries.setVisible(true, false);
+                Random random = new Random();
+                Display display = getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                int width = size.x;
+                int height = size.y;
+                worries[index].setX(random.nextInt(width));                        // X축 범위 : 0   ~ 화면 크기
+                worries[index].setY(random.nextInt(height - 279) + 280);    // Y축 범위 : 280 ~ 화면 크기
+                addContentView(worries[index], new DrawerLayout.LayoutParams(300, 300));
+                worries[index].setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(HomeActivity.this, "hi", Toast.LENGTH_SHORT);
+                    }
+                });
+                index++;
+            }
+        } while(worryRCD.moveToNext());
     }
 
     @Override
