@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -64,31 +65,34 @@ public class HomeActivity extends AppCompatActivity
         // 고민 출력
         SQLiteDatabase myDB = this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
 
-        Cursor worryRCD = myDB.query("Worrymatch", new String[] {"Worryno"}, "Id='"+strID+"'", null, null, null, null, null);
+        Cursor worryNoRCD = myDB.query("Worrymatch", new String[] {"Worryno"}, "Id='"+strID+"'", null, null, null, null, null);
         // select Worryno from Worrymatch where Id = '아이디'
 
         Shell[] worries = new Shell[10]; // 이미지 객체 배열 생성
-
+        int j=0;
         for (int i=0 ; i<worries.length ; i++) {
             if (i==0) {
-                if (!worryRCD.moveToFirst()) break;
+                if (!worryNoRCD.moveToFirst()) break;
             } else {
-                if (!worryRCD.moveToNext()) break;
+                if (!worryNoRCD.moveToNext()) break;
             }
-
-            int worryNo = worryRCD.getInt(0);
-
+            int worryNo = worryNoRCD.getInt(0);
             worries[i] = new Shell(this);
             worries[i].setImageResource(R.drawable.shell);
 
-            worryRCD = myDB.query("Worry", null, "Worryno = '" + Integer.toString(worryNo) + "'", null, null, null, null, null);
-            worries[i].setWorryNo(worryRCD.getInt(0));
+            //Cursor worryRCD = myDB.query("Worry", null, "Worryno = '" + Integer.toString(worryNo) + "'", null, null, null, null, null);
+            Cursor worryRCD = myDB.query("Worry", null, "Worryno='"+worryNo+"'", null, null, null, null, null);
+            if (j == 0) worryRCD.moveToFirst();
+            else worryRCD.moveToNext();
+            j++;
+
+            worries[i].setWorryNo(Integer.parseInt(worryRCD.getString(0)));
             worries[i].setTitle(worryRCD.getString(1));
             worries[i].setContent(worryRCD.getString(2));
             worries[i].setDate(worryRCD.getString(3));
             worries[i].setWriter(worryRCD.getString(4));
 
-
+            worryRCD.close();
             Random random = new Random(); // 랜덤 객체 선언
 
             Display display = getWindowManager().getDefaultDisplay();
@@ -96,9 +100,9 @@ public class HomeActivity extends AppCompatActivity
             display.getSize(size);
             int width = size.x;  // 안드로이드 화면의 가로 길이
             int height = size.y; // 안드로이드 화면의 세로 길이
-
             worries[i].setX(random.nextInt(width - worries[i].getWidth()) - worries[i].getWidth()/2);                                   // X축 범위 : 0   ~ 화면 크기
             worries[i].setY(random.nextInt(height - height/11 + 1 - worries[i].getHeight()) + height/11 - worries[i].getHeight()/2);    // Y축 범위 : 280 ~ 화면 크기
+
             addContentView(worries[i], new DrawerLayout.LayoutParams(width/6, height/6));
 
             worries[i].setOnClickListener(ShellListener);
@@ -109,7 +113,13 @@ public class HomeActivity extends AppCompatActivity
         @Override
         public void onClick(View v) {
             v = (Shell)v;
-            // Intent writeWorry = new Intent(this, 고민작성 activity)
+            Intent writeWorry = new Intent(HomeActivity.this, WorryActivity.class);
+            writeWorry.putExtra("WorryNo", ((Shell) v).getWorryNo());
+            writeWorry.putExtra("WorryTitle", ((Shell) v).getTitle());
+            writeWorry.putExtra("WorryContent", ((Shell) v).getContent());
+            writeWorry.putExtra("WorryWriter", ((Shell) v).getWriter());
+            writeWorry.putExtra("WorryDate", ((Shell) v).getDate());
+            startActivityForResult(writeWorry, 1000); // 고민작성 : 1000
         }
     };
 
