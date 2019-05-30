@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -76,6 +78,12 @@ public class MainActivity extends AppCompatActivity{
         Button btn_login = (Button)findViewById(R.id.btn_login);
         btn_join.setOnClickListener(join_listener);
         btn_login.setOnClickListener(login_listener);
+
+        if(getIntent() != null) { // 받은 인텐트가 있으면
+            boolean isLogout = getIntent().getBooleanExtra("Logout", false);
+            if (isLogout)
+                Toast.makeText(this, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     View.OnClickListener join_listener = new View.OnClickListener() {   // 회원가입 버튼 클릭
@@ -101,6 +109,7 @@ public class MainActivity extends AppCompatActivity{
                     Intent loginIntent = new Intent(MainActivity.this, HomeActivity.class);
                     loginIntent.putExtra("ID", Id); // 아이디 전달
                     startActivityForResult(loginIntent,1);
+                    finish();
                 } else { // 패스워드 불일치
                     Toast.makeText(MainActivity.this, "패스워드가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                 }
@@ -108,4 +117,14 @@ public class MainActivity extends AppCompatActivity{
             }
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1) {
+            Log.i(this.getClass().getName(), "메시지");
+            Toast.makeText(MainActivity.this, "로그아웃되었습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

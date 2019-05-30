@@ -68,6 +68,7 @@ public class HomeActivity extends AppCompatActivity
         // select Worryno from Worrymatch where Id = '아이디'
 
         Shell[] worries = new Shell[10]; // 이미지 객체 배열 생성
+
         for (int i=0 ; i<worries.length ; i++) {
             if (i==0) {
                 if (!worryRCD.moveToFirst()) break;
@@ -99,8 +100,18 @@ public class HomeActivity extends AppCompatActivity
             worries[i].setX(random.nextInt(width - worries[i].getWidth()) - worries[i].getWidth()/2);                                   // X축 범위 : 0   ~ 화면 크기
             worries[i].setY(random.nextInt(height - height/11 + 1 - worries[i].getHeight()) + height/11 - worries[i].getHeight()/2);    // Y축 범위 : 280 ~ 화면 크기
             addContentView(worries[i], new DrawerLayout.LayoutParams(width/6, height/6));
+
+            worries[i].setOnClickListener(ShellListener);
         }
     }
+
+    View.OnClickListener ShellListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            v = (Shell)v;
+            // Intent writeWorry = new Intent(this, 고민작성 activity)
+        }
+    };
 
     @Override
     public void onBackPressed() {
@@ -140,13 +151,17 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_write) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_myWorries) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_profile) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_logout) {
+            Intent logoutIntent = new Intent(HomeActivity.this, MainActivity.class);
+            logoutIntent.putExtra("Logout", true);
+            startActivity(logoutIntent); // 로그아웃 : 1000
+        } else if (id == R.id.nav_closeAccount) {
 
         }
 
