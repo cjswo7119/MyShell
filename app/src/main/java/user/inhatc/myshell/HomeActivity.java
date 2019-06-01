@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -102,9 +104,11 @@ public class HomeActivity extends AppCompatActivity
             int height = size.y; // 안드로이드 화면의 세로 길이
             worries[i].setX(random.nextInt(width - worries[i].getWidth()) - worries[i].getWidth()/2);                                   // X축 범위 : 0   ~ 화면 크기
             worries[i].setY(random.nextInt(height - height/11 + 1 - worries[i].getHeight()) + height/11 - worries[i].getHeight()/2);    // Y축 범위 : 280 ~ 화면 크기
+            worries[i].setLayoutParams(new DrawerLayout.LayoutParams(width/6, height/6));
+            // addContentView(worries[i], new DrawerLayout.LayoutParams(width/6, height/6));
+            CoordinatorLayout cLayout = (CoordinatorLayout)findViewById(R.id.coordinator);
 
-            addContentView(worries[i], new DrawerLayout.LayoutParams(width/6, height/6));
-
+            cLayout.addView(worries[i]);
             worries[i].setOnClickListener(ShellListener);
         }
     }
@@ -115,7 +119,6 @@ public class HomeActivity extends AppCompatActivity
             v = (Shell)v;
             Intent writeWorry = new Intent(HomeActivity.this, WorryActivity.class);
             writeWorry.putExtra("WorryNo", ((Shell) v).getWorryNo());
-            writeWorry.putExtra("WorryTitle", ((Shell) v).getTitle());
             writeWorry.putExtra("WorryContent", ((Shell) v).getContent());
             writeWorry.putExtra("WorryWriter", ((Shell) v).getWriter());
             writeWorry.putExtra("WorryDate", ((Shell) v).getDate());
@@ -162,7 +165,9 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_write) {
-            // Handle the camera action
+            Intent writeIntent = new Intent(HomeActivity.this, writeWorry.class);
+            writeIntent.putExtra("ID", getIntent().getStringExtra("ID"));
+            startActivityForResult(writeIntent, 1000); // 고민작성 : 1000
         } else if (id == R.id.nav_myWorries) {
 
         } else if (id == R.id.nav_profile) {
@@ -170,7 +175,7 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_logout) {
             Intent logoutIntent = new Intent(HomeActivity.this, MainActivity.class);
             logoutIntent.putExtra("Logout", true);
-            startActivity(logoutIntent); // 로그아웃 : 1000
+            startActivity(logoutIntent);
         } else if (id == R.id.nav_closeAccount) {
 
         }
@@ -178,5 +183,14 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1000) {
+            // 고민작성하고 나온 결과
+        }
     }
 }

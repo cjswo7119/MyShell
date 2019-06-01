@@ -41,25 +41,23 @@ public class MainActivity extends AppCompatActivity{
         * Lastlogin : 최근접속일, 텍스트
         * */
 
-        myDB.execSQL("Create table if not exists Worry (Worryno Integer primary key autoincrement, Title text not null, " +
+        myDB.execSQL("Create table if not exists Worry (Worryno Integer primary key autoincrement," +
                     "Content text not null, Date text not null, Writer text not null);");
         /*
          * -Worry Table
          * Worryno : 고민번호, 숫자, 기본키
-         * Title : 고민제목, 텍스트
          * Content : 고민내용, 텍스트
          * Date : 고민작성일, 텍스트
          * Writer : 고민작성자, 텍스트
          * */
 
         myDB.execSQL("Create table if not exists Answer (Answerno Integer not null primary key, Worryno Integer not null, " +
-                    "Title text not null, Content text not null, Date text not null, Writer text not null);");
+                    "Content text not null, Date text not null, Writer text not null);");
 
         /*
          * -Answer Table
          * Answerno : 답변번호, 숫자, 기본키
          * Worryno : 고민번호, 숫자
-         * Title : 고민제목, 텍스트
          * Content : 답변내용, 텍스트
          * Date : 답변작성일, 텍스트
          * Writer : 답변작성자, 텍스트

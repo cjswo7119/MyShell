@@ -7,14 +7,42 @@
     android:background="@drawable/background"
     tools:context=".WorryActivity">
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="13dp"
-        android:layout_marginBottom="14dp"
-        android:ems="10"
-        android:inputType="textMultiLine" />
+    <TextView
+        android:id="@+id/worryTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="monospace"
+        android:gravity="center_horizontal"
+        android:text="누군가의 고민..."
+        android:textColor="@android:color/background_light"
+        android:textSize="24dp" />
+
+    <TextView
+        android:id="@+id/worryContent"
+        android:layout_width="match_parent"
+        android:layout_height="650dp"
+        android:layout_below="@id/worryTitle"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="@android:color/background_light"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_answerCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edtWorry"
+        android:layout_toStartOf="@id/btn_worryWrite"
+        android:layout_alignParentBottom="true"
+        android:text="닫기" />
+
+    <Button
+        android:id="@+id/btn_answerWrite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edtWorry"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:text="답장하기" />
 </RelativeLayout>
