@@ -9,7 +9,6 @@ public class Shell extends AppCompatImageView {
 
     private int WorryNo;
     private String Writer;
-    private String Title;
     private String Content;
     private String Date;
 
@@ -27,10 +26,6 @@ public class Shell extends AppCompatImageView {
         return Writer;
     }
 
-    public String getTitle() {
-        return Title;
-    }
-
     public String getContent() {
         return Content;
     }
@@ -45,10 +40,6 @@ public class Shell extends AppCompatImageView {
 
     public void setWriter(String writer) {
         Writer = writer;
-    }
-
-    public void setTitle(String title) {
-        Title = title;
     }
 
     public void setContent(String content) {

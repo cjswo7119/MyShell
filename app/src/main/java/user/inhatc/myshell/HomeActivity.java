@@ -89,7 +89,6 @@ public class HomeActivity extends AppCompatActivity
             j++;
 
             worries[i].setWorryNo(Integer.parseInt(worryRCD.getString(0)));
-            worries[i].setTitle(worryRCD.getString(1));
             worries[i].setContent(worryRCD.getString(2));
             worries[i].setDate(worryRCD.getString(3));
             worries[i].setWriter(worryRCD.getString(4));
@@ -167,6 +166,7 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.nav_write) {
             Intent writeIntent = new Intent(HomeActivity.this, writeWorry.class);
             writeIntent.putExtra("ID", getIntent().getStringExtra("ID"));
+            writeIntent.putExtra("NICKNAME", getIntent().getStringExtra("NICKNAME"));
             startActivityForResult(writeIntent, 1000); // 고민작성 : 1000
         } else if (id == R.id.nav_myWorries) {
 
@@ -188,9 +188,13 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 1000) {
-            // 고민작성하고 나온 결과
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1000) { // 고민작성하고 나온 결과
+                Toast.makeText(HomeActivity.this, "고민이 누군가에게 전송되었습니다.", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(HomeActivity.this, "오류가 발생했습니다.", Toast.LENGTH_SHORT);
         }
+
     }
 }
