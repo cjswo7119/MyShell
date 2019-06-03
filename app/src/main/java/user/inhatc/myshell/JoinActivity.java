@@ -1,5 +1,6 @@
 package user.inhatc.myshell;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
         return Pattern.matches("(^[~`!@#$%^&*()_+-={}:;<>,.?/|\"\'\\\\\\[\\]|]*$)", word);  //\는 앞에\\\, [,]는 \\
     }
 
+    SQLiteDatabase myDB;
     private EditText userID;
     private EditText userPassword;
     private EditText userPWCheck;
@@ -48,8 +51,12 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
     private Button joinBack;
     private Button joinUser;
 
-    Calendar cal = Calendar.getInstance();  //현재시간 가져오기
-    int year=cal.get(cal.YEAR);           //현재시간의 년도 가져오기
+    Calendar cal = Calendar.getInstance();    //현재시간 가져오기
+    int year = cal.get(cal.YEAR);           //현재시간의 년도 가져오기
+    int month = cal.get(cal.MONTH);         //현재시간의 월 가져오기
+    int day = cal.get(cal.DATE);            //현재시간의 일 가져오기
+
+    String current = Integer.toString(year)+String.format("%02d",month)+String.format("%02d",day);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,27 +104,56 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if(userID.getText().toString().length() < 2) {
             joinError.setText("아이디는 2글자 이상 15자 미만입니다.");
-            if(isLower(userID.getText().toString()) || isNumber(userID.getText().toString())) { //소문자 또는 숫자로만 이루어진 경우
+            return;
+        }else {
+            if(isLower(userID.getText().toString())) { //소문자 또는 숫자로만 이루어진 경우
                 joinError.setText("아이디는 소문자와 숫자 조합입니다.");
                 return;
             }
-            return;
+            if(isNumber(userID.getText().toString())) { //소문자 또는 숫자로만 이루어진 경우
+                joinError.setText("아이디는 소문자와 숫자 조합입니다.");
+                return;
+            }
         }
+        String security;
+        int pwCheck=0, pwLow=0, pwNum=0, pwUpp=0, pwSym=0;
+        String[] userpw = userPassword.getText().toString().split("");
         if(userPassword.getText().toString().length() < 8) {
             joinError.setText("비밀번호는 8자 이상 20자 미만입니다.");
             //if(소문자, 대문자, 숫자, 특수문자 포함)
             return;
+        }else {
+            for(int i=0; i<userPassword.getText().toString().length(); i++){
+                if(isLower(userpw[i])){         //소무자가 포함된 경우
+                    pwLow=8;
+                }else if(isNumber(userpw[i])){  //숫자가 포한된 경우
+                    pwNum=4;
+                }else if(isUpper(userpw[i])){   //대문자가 포함된 경우
+                    pwUpp=2;
+                }else if(isSymbol(userpw[i])){  //특수문자가 포함된 경우
+                    pwSym=1;
+                }
+                pwCheck=pwLow+pwNum+pwUpp+pwSym; //보안등급 합산
+                if(isLower(userPassword.getText().toString())) { //소문자 또는 숫자로만 이루어진 경우
+                    joinError.setText("비밀번호는 소문자와 숫자가 포함되어야 합니다.");
+                    return;
+                }
+                if(isNumber(userPassword.getText().toString())) { //소문자 또는 숫자로만 이루어진 경우
+                    joinError.setText("비밀번호는 소문자와 숫자가 포함되어야 합니다.");
+                    return;
+                }
+            }
         }
-        if(userPassword.getText().equals(userPWCheck.getText())) {
+        if(!userPassword.getText().toString().equals(userPWCheck.getText().toString())) {
             joinError.setText("입력하신 비밀번호와 일치하지 않습니다.");
             return;
         }
-        if(userName.getText().toString().length() < 5) {
-            joinError.setText("성명은 5자 이상입니다.");
-            if(!isKorea(userName.getText().toString())) {  //한글아닌 다른 문자가 포함된 경우
-                joinError.setText("성명은 한글로만 작성가능합니다.");
-                return;
-            }
+        if(userName.getText().toString().length() < 2) {
+            joinError.setText("성명은 2자 이상입니다.");
+            return;
+        }
+        if(!isKorea(userName.getText().toString())) {  //한글아닌 다른 문자가 포함된 경우
+            joinError.setText("성명은 한글만 입력 가능합니다.");
             return;
         }
         if(userNickName.getText().toString().length() < 5){
@@ -137,7 +173,13 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
             joinError.setText("유효하지 않은 이메일입니다.");
             return;
         }
-        joinError.setText("성공");
+        myDB = this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
+        String sql="Insert into User " +
+                "values ('"+userID.getText().toString()+"', '"+userPassword.getText().toString()+"', '"+userName.getText().toString()+"', '"
+                +userNickName.getText().toString()+"', "+Integer.parseInt(date)+", '"+userEmail.getText().toString()+"',0,"+"'"+current+"');";
+        myDB.execSQL(sql);
+        Toast.makeText(this, sql,Toast.LENGTH_LONG).show();
+        if(myDB != null) myDB.close();
     }
     public static boolean checkEmail(String email){
         String regex = "^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$";
