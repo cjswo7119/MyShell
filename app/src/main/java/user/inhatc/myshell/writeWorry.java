@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class writeWorry extends AppCompatActivity {
 
@@ -44,7 +45,7 @@ public class writeWorry extends AppCompatActivity {
 
                 String Content = edtWorry.getText().toString();
 
-                Calendar cal = Calendar.getInstance();  // 현재시간 가져오기
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));  // 현재 시간 가져오기
                 int year = cal.get(cal.YEAR);           // 현재 년도
                 int month = cal.get(cal.MONTH) + 1;     // 현재 월
                 int day = cal.get(cal.DATE);            // 현재 일
@@ -58,32 +59,30 @@ public class writeWorry extends AppCompatActivity {
                 // select min(cntworry) from user;
                 minCntWorryRCD.moveToFirst();
                 int minCntWorry = minCntWorryRCD.getInt(0); // 가장 적게 받은 고민의 수
+                Log.i("MagicShell", "가장 적게 받은 고민의 수 : " + minCntWorry);
 
                 Cursor minCntWorryUserRCD = myDB.query("User", null, "CntWorry = " + minCntWorry, null, null, null, null, null); // 가장 적은 고민의 개수를 가진 유저들의 레코드
                 // select * from user where cntworry = minCntWorry; 가장 적은 고민을 받은 유저들을 불러옴
 
                 Calendar[] dateList = new Calendar[minCntWorryUserRCD.getCount()]; // 가장 적은 고민을 받은 유저들의 날짜를 저장하기 위한 Calendar 객체 배열 선언.
-
+                Log.i("MagicShell", " " + minCntWorryUserRCD.getCount());
                 for (int i=0 ; i < minCntWorryUserRCD.getCount() ; i++) { // Calendar 배열 dateList에 가장 적은 고민을 받은 유저들의 최근 접속일(Lastlogin) 저장
-                    if (i==0) {
-                        if(!minCntWorryUserRCD.moveToFirst()) return;
-                    } else {
-                        if (!minCntWorryUserRCD.moveToNext()) return;
-                    }
+                    if (i==0) minCntWorryUserRCD.moveToFirst();
+                    else      minCntWorryUserRCD.moveToNext();
+
+                    if (minCntWorryUserRCD == null) return;
+                    Log.i("MagicShell", minCntWorryUserRCD.getString(7));
                     String[] ymd = minCntWorryUserRCD.getString(7).split("-"); // index 7 : lastlogin, 최근 접속일을 - 을 구분자로 쪼개어서 ymd 문자열 배열에 저장.
+                    Log.i("MagicShell", ymd[0] + " " + ymd[1] + " " + ymd[2]);
                     dateList[i] = Calendar.getInstance();
-                    dateList[i].set(Calendar.HOUR_OF_DAY, 0);
-                    dateList[i].set(Calendar.MINUTE, 0);
-                    dateList[i].set(Calendar.SECOND, 0);
-                    dateList[i].set(Calendar.MILLISECOND, 0);
+                    //dateList[i].set(Calendar.MILLISECOND, 0);
                     // 현재 날짜를 받고, 자잘한 시간들을 0으로 초기화함.
 
-                    dateList[i].set(Integer.parseInt(ymd[0]), Integer.parseInt(ymd[1]), Integer.parseInt(ymd[2]));
+                    dateList[i].set(Integer.parseInt(ymd[0]), (Integer.parseInt(ymd[1])-1), (Integer.parseInt(ymd[2])), 0, 0, 0);
                     // i 번째 유저의 최근 접속일의 년, 월, 일을 세팅.
 
-
                     Log.i("MagicShell", "" + dateList[i].get(dateList[i].YEAR));
-                    Log.i("MagicShell", "" + dateList[i].get(dateList[i].MONTH));
+                    Log.i("MagicShell", "" + (dateList[i].get(dateList[i].MONTH)+1));
                     Log.i("MagicShell", "" + dateList[i].get(dateList[i].DATE));
                     Log.i("MagicShell", "==================================");
                 }
@@ -114,7 +113,8 @@ public class writeWorry extends AppCompatActivity {
                 }
                 // 가장 최근의 접속일을 구해서 maxDate에 날짜 형태로 담았다.
 
-                String strMaxDate = maxDate.get(maxDate.YEAR) + "-" + maxDate.get(maxDate.MONTH) + "-" + maxDate.get(maxDate.DATE); // 가장 최근 접속일을 DB에 넣기 좋게 String 타입으로 변환.
+                String strMaxDate = maxDate.get(maxDate.YEAR) + "-" + (maxDate.get(maxDate.MONTH)+1) + "-" + maxDate.get(maxDate.DATE); // 가장 최근 접속일을 DB에 넣기 좋게 String 타입으로 변환.
+                Log.i("MagicShell", "가장 적게 받은 유저들 중 가장 최근 접속일 : " + strMaxDate);
 
                 String[] args = {strMaxDate, Integer.toString(minCntWorry)}; // Cursor의 조건문에 넣기 위한 String 배열.
                 Cursor maxLastLoginUserRCD = myDB.query("User", null, "Lastlogin = ? and Cntworry = ?", args, null, null, null, null); // select * from user where lastlogin = '날짜' and cntworry = '숫자';
@@ -141,11 +141,16 @@ public class writeWorry extends AppCompatActivity {
                 // 고민을 받은 유저의 받은 고민의 수를 1 증가시켜주는 코드
 
                 myDB.execSQL(strSQL);
+                minCntWorryRCD.close();
+                minCntWorryUserRCD.close();
+                maxLastLoginUserRCD.close();
+                maxWorryNoRCD.close();
+
                 //setResult(RESULT_OK);
                 //finish();
 
             } catch (Exception e) {
-                Log.i("에러", e.getMessage());
+                Log.i("MagicShell", e.getMessage());
             }
         }
     };

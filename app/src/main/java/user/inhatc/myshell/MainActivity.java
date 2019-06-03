@@ -13,6 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
 public class MainActivity extends AppCompatActivity{
     // 테이블 생성
     SQLiteDatabase myDB;
@@ -42,18 +45,18 @@ public class MainActivity extends AppCompatActivity{
         * */
 
         myDB.execSQL("Create table if not exists Worry (Worryno Integer primary key autoincrement," +
-                    "Content text not null, Date text not null, WriterNick text not null, WriterId text not null);");
+                    "Content text not null, Date text not null, WriterId text not null, WriterNick text not null);");
         /*
          * -Worry Table
          * Worryno : 고민번호, 숫자, 기본키
          * Content : 고민내용, 텍스트
          * Date : 고민작성일, 텍스트
-         * WriterNick : 고민작성자, 텍스트
          * WriterId : 고민작성자, 아이디, 텍스트
+         * WriterNick : 고민작성자, 텍스트
          * */
 
         myDB.execSQL("Create table if not exists Answer (Answerno Integer not null primary key, Worryno Integer not null, " +
-                    "Content text not null, Date text not null, WriterNick text not null, WriterId text not null);");
+                    "Content text not null, Date text not null, WriterId text not null, WriterNick text not null);");
 
         /*
          * -Answer Table
@@ -61,8 +64,8 @@ public class MainActivity extends AppCompatActivity{
          * Worryno : 고민번호, 숫자
          * Content : 답변내용, 텍스트
          * Date : 답변작성일, 텍스트
+         * WriterId : 답변작성자, 텍스트
          * WriterNick : 답변작성자, 텍스트
-         * WriterId
          * */
 
         myDB.execSQL("Create table if not exists Worrymatch (Matchno Integer not null primary key, Worryno Integer not null, Id text not null, Iswrited text not null);");
@@ -108,11 +111,22 @@ public class MainActivity extends AppCompatActivity{
                 String Nickname = idRCD.getString(3);
 
                 if(idRCD.getString(1).equals(Password)) { // 패스워드 일치
+                    Calendar cal = Calendar.getInstance();  // 현재시간 가져오기
+                    cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
+                    int year = cal.get(cal.YEAR);           // 현재 년도
+                    int month = cal.get(cal.MONTH) + 1;     // 현재 월
+                    int day = cal.get(cal.DATE);            // 현재 일
+                    String strDate = year + "-" + month + "-" + day + "";
+                    myDB.execSQL("Update User Set Lastlogin = '" + strDate + "' where id = '" + Id + "'"); // 접속한 유저의 최근 접속일 갱신
+
                     Intent loginIntent = new Intent(MainActivity.this, HomeActivity.class);
                     loginIntent.putExtra("ID", Id); // 아이디 전달
                     loginIntent.putExtra("NICKNAME", Nickname);
                     startActivityForResult(loginIntent,1);
                     finish();
+
+                    idRCD.close();
+                    if (myDB != null) myDB.close();
                 } else { // 패스워드 불일치
                     Toast.makeText(MainActivity.this, "패스워드가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                 }
