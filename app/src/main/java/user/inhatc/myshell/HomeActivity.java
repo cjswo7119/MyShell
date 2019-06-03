@@ -89,9 +89,10 @@ public class HomeActivity extends AppCompatActivity
             j++;
 
             worries[i].setWorryNo(Integer.parseInt(worryRCD.getString(0)));
-            worries[i].setContent(worryRCD.getString(2));
-            worries[i].setDate(worryRCD.getString(3));
-            worries[i].setWriter(worryRCD.getString(4));
+            worries[i].setContent(worryRCD.getString(1));
+            worries[i].setDate(worryRCD.getString(2));
+            worries[i].setWriterNick(worryRCD.getString(3));
+            worries[i].setWriterId(worryRCD.getString(4));
 
             worryRCD.close();
             Random random = new Random(); // 랜덤 객체 선언
@@ -119,7 +120,8 @@ public class HomeActivity extends AppCompatActivity
             Intent writeWorry = new Intent(HomeActivity.this, WorryActivity.class);
             writeWorry.putExtra("WorryNo", ((Shell) v).getWorryNo());
             writeWorry.putExtra("WorryContent", ((Shell) v).getContent());
-            writeWorry.putExtra("WorryWriter", ((Shell) v).getWriter());
+            writeWorry.putExtra("WorryWriterId", ((Shell) v).getWriterId());
+            writeWorry.putExtra("WorryWriterNick", ((Shell) v).getWriterNick());
             writeWorry.putExtra("WorryDate", ((Shell) v).getDate());
             startActivityForResult(writeWorry, 1000); // 고민작성 : 1000
         }

@@ -17,13 +17,13 @@ public class WorryActivity extends AppCompatActivity {
         if (getIntent() != null) {
             int WorryNo = getIntent().getIntExtra("WorryNo", 0);
             String WorryContent = getIntent().getStringExtra("WorryContent");
-            String WorryWriter = getIntent().getStringExtra("WorryWriter");
+            String WorryWriterNick = getIntent().getStringExtra("WorryWriterNick");
             String WorryDate = getIntent().getStringExtra("WorryDate");
 
             TextView worryContent = (TextView)findViewById(R.id.worryContent);
             String content = WorryDate + "에 작성한 고민...\n\n";
             content += WorryContent + "\n\n";
-            content += "간절한 답장을 바라는 " + WorryWriter + "가...";
+            content += "간절한 답장을 바라는 " + WorryWriterNick + "가...";
             worryContent.append(content);
         }
 

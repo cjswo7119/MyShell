@@ -8,7 +8,8 @@ import android.widget.Toast;
 public class Shell extends AppCompatImageView {
 
     private int WorryNo;
-    private String Writer;
+    private String WriterNick;
+    private String WriterId;
     private String Content;
     private String Date;
 
@@ -22,8 +23,10 @@ public class Shell extends AppCompatImageView {
         return WorryNo;
     }
 
-    public String getWriter() {
-        return Writer;
+    public String getWriterId() { return WriterId; }
+
+    public String getWriterNick() {
+        return WriterNick;
     }
 
     public String getContent() {
@@ -38,15 +41,11 @@ public class Shell extends AppCompatImageView {
         WorryNo = worryNo;
     }
 
-    public void setWriter(String writer) {
-        Writer = writer;
-    }
+    public void setWriterId(String writerid) { WriterId = writerid; }
 
-    public void setContent(String content) {
-        Content = content;
-    }
+    public void setWriterNick(String writernick) { WriterNick = writernick; }
 
-    public void setDate(String date) {
-        Date = date;
-    }
+    public void setContent(String content) { Content = content; }
+
+    public void setDate(String date) { Date = date; }
 }
