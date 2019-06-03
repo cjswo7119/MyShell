@@ -52,9 +52,9 @@ public class writeWorry extends AppCompatActivity {
 
                 String strSQL = "Insert into Worry(Content, Date, WriterNick, WriterId) values('" + Content + "', '" + nowDate + "', '" + getIntent().getStringExtra("NICKNAME") + "', '" + getIntent().getStringExtra("ID") + "');"; // 고민 테이블에 저장
                 myDB.execSQL(strSQL);
-
                 Cursor minCntWorryRCD = myDB.query("User", new String[] {"MIN(CntWorry)"}, null, null, null, null, null, null);
                 minCntWorryRCD.moveToFirst();
+
                 int minCntWorry = minCntWorryRCD.getInt(0);
 
                 Cursor minCntWorryUserRCD = myDB.query("User", null, "CntWorry = " + minCntWorry, null, null, null, null, null); // 가장 적은 고민의 개수를 가진 유저들의 레코드
@@ -68,6 +68,7 @@ public class writeWorry extends AppCompatActivity {
                         if (!minCntWorryUserRCD.moveToNext()) return;
                     }
                     String[] ymd = minCntWorryUserRCD.getString(7).split("-");
+                    Log.i("에르어", minCntWorryUserRCD.getString(7));
                     dateList[i] = Calendar.getInstance();
                     dateList[i].set(Calendar.HOUR_OF_DAY, 0);
                     dateList[i].set(Calendar.MINUTE, 0);
@@ -75,6 +76,7 @@ public class writeWorry extends AppCompatActivity {
                     dateList[i].set(Calendar.MILLISECOND, 0);
 
                     dateList[i].set(Integer.parseInt(ymd[0]), Integer.parseInt(ymd[1]), Integer.parseInt(ymd[2]));
+
 
                     Log.i("Error", "에르어:" + dateList[i].get(dateList[i].YEAR));
                     Log.i("Error", "에르어:" + dateList[i].get(dateList[i].MONTH));
@@ -94,10 +96,11 @@ public class writeWorry extends AppCompatActivity {
                         maxDate.setTimeInMillis(dateList[i].getTimeInMillis());
                 }
 
-                String strMaxDate = maxDate.get(maxDate.YEAR) + "-" + maxDate.get(maxDate.MONTH) + "-" + maxDate.get(maxDate.DATE);
-                Log.i("Error", "에르어:가장 최근 접속일은? " + strMaxDate);
+                String strMaxDate = maxDate.get(maxDate.YEAR) + "-" + maxDate.get(maxDate.MONTH) + "-" + maxDate.get(maxDate.DATE); // 가장 최근 접속일
 
-                Cursor maxLastLoginUserRCD = myDB.query("User", null, "Lastlogin = '" + strMaxDate + "'", null, null, null, null, null);
+                //Cursor maxLastLoginUserRCD = myDB.query("User", null, "Lastlogin = '" + strMaxDate + "' and ", null, null, null, null, null);
+                String[] args = {strMaxDate, Integer.toString(minCntWorry)};
+                Cursor maxLastLoginUserRCD = myDB.query("User", null, "Lastlogin = ? and Cntworry = ?", args, null, null, null, null); // select * from user where lastlogin = '날짜' and cntworry = '숫자';
                 maxLastLoginUserRCD.moveToFirst();
                 String maxLastLoginUserID = maxLastLoginUserRCD.getString(0); // 가장 최근에 접속한 유저의 아이디
 
@@ -106,7 +109,9 @@ public class writeWorry extends AppCompatActivity {
                 maxWorryNoRCD.moveToFirst();
 
                 strSQL = "insert into Worrymatch(Worryno, Id, Iswrited) values(" + maxWorryNoRCD.getString(0) + ", '" + maxLastLoginUserID + "', 'F');";
-                Log.i("에르어", strSQL);
+                myDB.execSQL(strSQL);
+
+                strSQL = "update User set Cntworry = Cntworry+1 where id = '" + maxLastLoginUserID + "'";
                 myDB.execSQL(strSQL);
                 //setResult(RESULT_OK);
                 //finish();
