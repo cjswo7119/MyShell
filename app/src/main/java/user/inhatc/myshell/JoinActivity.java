@@ -53,10 +53,10 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
 
     Calendar cal = Calendar.getInstance();    //현재시간 가져오기
     int year = cal.get(cal.YEAR);           //현재시간의 년도 가져오기
-    int month = cal.get(cal.MONTH);         //현재시간의 월 가져오기
+    int month = cal.get(cal.MONTH)+1;         //현재시간의 월 가져오기
     int day = cal.get(cal.DATE);            //현재시간의 일 가져오기
 
-    String current = Integer.toString(year)+String.format("%02d",month)+String.format("%02d",day);
+    String current = Integer.toString(year)+"-"+Integer.toString(month)+"-"+Integer.toString(day);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
