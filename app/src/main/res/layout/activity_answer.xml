@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AnswerActivity"
+    android:background="@drawable/background">
+
+    <TextView
+        android:id="@+id/answerTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="monospace"
+        android:gravity="center_horizontal"
+        android:text="누군가의 답장..."
+        android:textColor="@android:color/background_light"
+        android:textSize="24dp" />
+
+    <TextView
+        android:id="@+id/answerContent"
+        android:layout_width="match_parent"
+        android:layout_height="650dp"
+        android:layout_below="@id/answerTitle"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="@android:color/background_light"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_answerReadCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/answerContent"
+        android:layout_toStartOf="@id/btn_answerReadComplete"
+        android:layout_alignParentBottom="true"
+        android:text="뒤로" />
+
+    <Button
+        android:id="@+id/btn_answerReadComplete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/answerContent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:text="확인" />
+</RelativeLayout>

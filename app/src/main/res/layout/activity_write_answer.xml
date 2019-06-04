@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".writeAnswer"
+    android:background="@drawable/background">
+
+    <TextView
+        android:id="@+id/answerTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="monospace"
+        android:gravity="center_horizontal"
+        android:text="답변 작성"
+        android:textColor="@android:color/background_light"
+        android:textSize="24dp" />
+
+    <EditText
+        android:id="@+id/edtAnswer"
+        android:layout_width="match_parent"
+        android:layout_height="650dp"
+        android:layout_below="@id/worryTitle"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:ems="10"
+        android:inputType="textMultiLine" />
+
+    <Button
+        android:id="@+id/btn_answerCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edtWorry"
+        android:layout_toStartOf="@id/btn_worryWrite"
+        android:layout_alignParentBottom="true"
+        android:text="취소" />
+
+    <Button
+        android:id="@+id/btn_answerWrite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edtWorry"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:text="작성" />
+
+</RelativeLayout>
