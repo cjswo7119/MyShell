@@ -5,6 +5,8 @@ import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.Serializable;
+
 public class Shell extends AppCompatImageView {
 
     private int WorryNo;
@@ -13,7 +15,7 @@ public class Shell extends AppCompatImageView {
     private String Content;
     private String Date;
 
-    private View.OnClickListener listener;
+    public int number;
 
     public Shell(Context context) {
         super(context);

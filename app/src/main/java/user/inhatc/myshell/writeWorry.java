@@ -61,7 +61,9 @@ public class writeWorry extends AppCompatActivity {
                 int minCntWorry = minCntWorryRCD.getInt(0); // 가장 적게 받은 고민의 수
                 Log.i("MagicShell", "가장 적게 받은 고민의 수 : " + minCntWorry);
 
-                Cursor minCntWorryUserRCD = myDB.query("User", null, "CntWorry = " + minCntWorry, null, null, null, null, null); // 가장 적은 고민의 개수를 가진 유저들의 레코드
+                String[] args = {Integer.toString(minCntWorry), getIntent().getStringExtra("ID")}; // args[0]=가장 적은 고민의 수, args[1]=유저의 ID
+                Cursor minCntWorryUserRCD = myDB.query("User", null, "CntWorry = ? and id <> ?", args, null, null, null, null);
+                //Cursor minCntWorryUserRCD = myDB.query("User", null, "CntWorry = " + minCntWorry, null, null, null, null, null); // 가장 적은 고민의 개수를 가진 유저들의 레코드
                 // select * from user where cntworry = minCntWorry; 가장 적은 고민을 받은 유저들을 불러옴
 
                 Calendar[] dateList = new Calendar[minCntWorryUserRCD.getCount()]; // 가장 적은 고민을 받은 유저들의 날짜를 저장하기 위한 Calendar 객체 배열 선언.
@@ -116,7 +118,7 @@ public class writeWorry extends AppCompatActivity {
                 String strMaxDate = maxDate.get(maxDate.YEAR) + "-" + (maxDate.get(maxDate.MONTH)+1) + "-" + maxDate.get(maxDate.DATE); // 가장 최근 접속일을 DB에 넣기 좋게 String 타입으로 변환.
                 Log.i("MagicShell", "가장 적게 받은 유저들 중 가장 최근 접속일 : " + strMaxDate);
 
-                String[] args = {strMaxDate, Integer.toString(minCntWorry)}; // Cursor의 조건문에 넣기 위한 String 배열.
+                args[0] = strMaxDate; args[1] = Integer.toString(minCntWorry); // Cursor의 조건문에 넣기 위한 String 배열.
                 Cursor maxLastLoginUserRCD = myDB.query("User", null, "Lastlogin = ? and Cntworry = ?", args, null, null, null, null); // select * from user where lastlogin = '날짜' and cntworry = '숫자';
                 // select * from user where Lastlogin = '가장 최근 접속일' and Cntworry = '가장 적게 받은 고민의 수';
                 // 가장 고민을 적게 받았고, 최근 접속일이 가장 최신인 유저를 불러온다.
@@ -146,8 +148,8 @@ public class writeWorry extends AppCompatActivity {
                 maxLastLoginUserRCD.close();
                 maxWorryNoRCD.close();
 
-                //setResult(RESULT_OK);
-                //finish();
+                setResult(RESULT_OK);
+                finish();
 
             } catch (Exception e) {
                 Log.i("MagicShell", e.getMessage());

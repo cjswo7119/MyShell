@@ -29,7 +29,7 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/btn_answerCancel"
+        android:id="@+id/btn_worryCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/edtWorry"
@@ -38,7 +38,7 @@
         android:text="닫기" />
 
     <Button
-        android:id="@+id/btn_answerWrite"
+        android:id="@+id/btn_worryWrite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/edtWorry"

@@ -32,7 +32,8 @@ import java.util.Random;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
+    SQLiteDatabase myDB;
+    Shell[] worries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,9 @@ public class HomeActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent refreshIntent = getIntent();
+                finish();
+                startActivity(refreshIntent);
                 Toast.makeText(HomeActivity.this, "새로고침 하였습니다.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -64,13 +68,16 @@ public class HomeActivity extends AppCompatActivity
         TextView navUsername = (TextView) headerView.findViewById(R.id.textView);
         navUsername.setText(strID + " 님"); // 환영합니다 ID 님
 
-        // 고민 출력
-        SQLiteDatabase myDB = this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
+        // 고민 번호를 불러와 Shell 객체에 저장하는 코드
+        if (myDB != null) myDB.close();
+        myDB = this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
 
-        Cursor worryNoRCD = myDB.query("Worrymatch", new String[] {"Worryno"}, "Id='"+strID+"'", null, null, null, null, null);
-        // select Worryno from Worrymatch where Id = '아이디'
+        String[] args = {strID, "F"};
+        Cursor worryNoRCD = myDB.query("Worrymatch", new String[] {"Worryno"}, "Id = ? and Iswrited = ?", args, null, null, null, null);
+        // 로그인한 유저에게 도착한 고민들 중 답변이 작성되지 않은 고민의 번호를 불러옴
+        // select Worryno from Worrymatch where Id = '아이디' and Iswrited = 'F';
 
-        Shell[] worries = new Shell[10]; // 이미지 객체 배열 생성
+        worries = new Shell[10]; // 이미지 객체 배열 생성
         int j=0;
         for (int i=0 ; i<worries.length ; i++) {
             if (i==0) {
@@ -78,12 +85,15 @@ public class HomeActivity extends AppCompatActivity
             } else {
                 if (!worryNoRCD.moveToNext()) break;
             }
+
             int worryNo = worryNoRCD.getInt(0);
             worries[i] = new Shell(this);
             worries[i].setImageResource(R.drawable.shell);
 
-            //Cursor worryRCD = myDB.query("Worry", null, "Worryno = '" + Integer.toString(worryNo) + "'", null, null, null, null, null);
-            Cursor worryRCD = myDB.query("Worry", null, "Worryno='"+worryNo+"'", null, null, null, null, null);
+            Cursor worryRCD = myDB.query("Worry", null, "Worryno='" + worryNo + "'", null, null, null, null, null);
+
+            // 고민 테이블에서 유저에게 도착한 고민들(답장이 입력되지 않은)의 정보를 불러옴
+            // select * from Worry where Worryno = '고민번호'
             if (j == 0) worryRCD.moveToFirst();
             else worryRCD.moveToNext();
             j++;
@@ -93,6 +103,7 @@ public class HomeActivity extends AppCompatActivity
             worries[i].setDate(worryRCD.getString(2));
             worries[i].setWriterNick(worryRCD.getString(3));
             worries[i].setWriterId(worryRCD.getString(4));
+            worries[i].number = i;
 
             worryRCD.close();
             Random random = new Random(); // 랜덤 객체 선언
@@ -116,14 +127,20 @@ public class HomeActivity extends AppCompatActivity
     View.OnClickListener ShellListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            v = (Shell)v;
-            Intent writeWorry = new Intent(HomeActivity.this, WorryActivity.class);
-            writeWorry.putExtra("WorryNo", ((Shell) v).getWorryNo());
-            writeWorry.putExtra("WorryContent", ((Shell) v).getContent());
-            writeWorry.putExtra("WorryWriterId", ((Shell) v).getWriterId());
-            writeWorry.putExtra("WorryWriterNick", ((Shell) v).getWriterNick());
-            writeWorry.putExtra("WorryDate", ((Shell) v).getDate());
-            startActivityForResult(writeWorry, 1000); // 고민작성 : 1000
+            try {
+                Log.i("MagicShell", "고민의 배열번호 : " + ((Shell)v).number);
+                Intent WorryIntent = new Intent(HomeActivity.this, WorryActivity.class);
+                WorryIntent.putExtra("WorryNo", ((Shell)v).getWorryNo());
+                WorryIntent.putExtra("WorryContent", ((Shell)v).getContent());
+                WorryIntent.putExtra("WorryWriterId", ((Shell)v).getWriterId());
+                WorryIntent.putExtra("WorryWriterNick", ((Shell)v).getWriterNick());
+                WorryIntent.putExtra("WorryDate", ((Shell)v).getDate());
+                WorryIntent.putExtra("Number", ((Shell)v).number);
+
+                WorryIntent.putExtra("ID", getIntent().getStringExtra("ID"));                // 접속한 유저의 ID
+                WorryIntent.putExtra("NICKNAME", getIntent().getStringExtra("NICKNAME"));    // 접속한 유저의 NICKNAME
+                startActivityForResult(WorryIntent, 1500); // 고민보기 : 1500
+            } catch (Exception e) { Log.i("MagicShell", e.getMessage()); }
         }
     };
 
@@ -191,8 +208,14 @@ public class HomeActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == 1000) { // 고민작성하고 나온 결과
-                Toast.makeText(HomeActivity.this, "고민이 누군가에게 전송되었습니다.", Toast.LENGTH_LONG).show();
+            if (requestCode == 1000) { // 고민을 작성하고 나와서 수행
+                Toast.makeText(HomeActivity.this, "고민이 누군가에게 전달되었습니다..", Toast.LENGTH_LONG).show();
+            } else if (requestCode == 1500) { // 답변을 작성하고 나와서 수행
+
+                Log.i("MagicShell", " " + data.getIntExtra("Number", -1));
+                CoordinatorLayout cLayout = (CoordinatorLayout)findViewById(R.id.coordinator);
+                cLayout.removeView(worries[data.getIntExtra("Number", -1)]);
+                Toast.makeText(HomeActivity.this, "소중한 답변이 전달되었습니다..", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(HomeActivity.this, "오류가 발생했습니다.", Toast.LENGTH_SHORT);

@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity{
          * WriterNick : 고민작성자, 텍스트
          * */
 
-        myDB.execSQL("Create table if not exists Answer (Answerno Integer not null primary key, Worryno Integer not null, " +
+        myDB.execSQL("Create table if not exists Answer (Answerno Integer primary key autoincrement, Worryno Integer not null, " +
                     "Content text not null, Date text not null, WriterId text not null, WriterNick text not null);");
 
         /*
