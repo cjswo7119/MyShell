@@ -34,6 +34,7 @@ public class HomeActivity extends AppCompatActivity
 
     SQLiteDatabase myDB;
     Shell[] worries;
+    Bottle[] answers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,7 @@ public class HomeActivity extends AppCompatActivity
         TextView navUsername = (TextView) headerView.findViewById(R.id.textView);
         navUsername.setText(strID + " 님"); // 환영합니다 ID 님
 
+        /*====================================================================================================================================================================*/
         // 고민 번호를 불러와 Shell 객체에 저장하는 코드
         if (myDB != null) myDB.close();
         myDB = this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
@@ -85,13 +87,11 @@ public class HomeActivity extends AppCompatActivity
             } else {
                 if (!worryNoRCD.moveToNext()) break;
             }
-
             int worryNo = worryNoRCD.getInt(0);
             worries[i] = new Shell(this);
             worries[i].setImageResource(R.drawable.shell);
 
             Cursor worryRCD = myDB.query("Worry", null, "Worryno='" + worryNo + "'", null, null, null, null, null);
-
             // 고민 테이블에서 유저에게 도착한 고민들(답장이 입력되지 않은)의 정보를 불러옴
             // select * from Worry where Worryno = '고민번호'
             if (j == 0) worryRCD.moveToFirst();
@@ -112,15 +112,81 @@ public class HomeActivity extends AppCompatActivity
             Point size = new Point();
             display.getSize(size);
             int width = size.x;  // 안드로이드 화면의 가로 길이
-            int height = size.y; // 안드로이드 화면의 세로 길이
-            worries[i].setX(random.nextInt(width - worries[i].getWidth()) - worries[i].getWidth()/2);                                   // X축 범위 : 0   ~ 화면 크기
-            worries[i].setY(random.nextInt(height - height/11 + 1 - worries[i].getHeight()) + height/11 - worries[i].getHeight()/2);    // Y축 범위 : 280 ~ 화면 크기
+            int height = size.y; // 안드로이드 화면의 세로 길이 (메뉴바를 제외한 길이)
+            // 1440x2800, 화면크기/6의 조건에서 좌측 상단의 x,y축 좌표는 (0, 125)
+            worries[i].setX(random.nextInt(width - width/6 + 1));              // X축 범위 : 0   ~ 화면 크기
+            worries[i].setY(random.nextInt(height - height/6 - 124) + 125);    // Y축 범위 : 125 ~ 화면 크기
             worries[i].setLayoutParams(new DrawerLayout.LayoutParams(width/6, height/6));
-            // addContentView(worries[i], new DrawerLayout.LayoutParams(width/6, height/6));
-            CoordinatorLayout cLayout = (CoordinatorLayout)findViewById(R.id.coordinator);
 
+            CoordinatorLayout cLayout = (CoordinatorLayout)findViewById(R.id.coordinator);
             cLayout.addView(worries[i]);
             worries[i].setOnClickListener(ShellListener);
+        }
+        /*====================================================================================================================================================================*/
+        // 답변 번호를 불러와 Bottle 객체에 저장하는 코드
+        worryNoRCD.close();
+        worryNoRCD = myDB.query("Worry", new String[] {"Worryno"}, "WriterId='" + strID + "'", null, null, null, null, null);
+        // 사용자가 작성한 고민 번호들의 레코드를 불러옴
+
+        answers = new Bottle[10];
+        j = 0;
+        for (int i=0 ; i<answers.length ; i++) {
+            if (i==0) {
+                if (!worryNoRCD.moveToFirst()) break;
+            } else {
+                if (!worryNoRCD.moveToNext()) break;
+            }
+
+            int worryNo = worryNoRCD.getInt(0);
+            answers[i] = new Bottle(this);
+            answers[i].setImageResource(R.drawable.bottle);
+
+
+            Cursor worrymatchRCD = myDB.query("Worrymatch", null, "Worryno=" + worryNo, null, null, null, null, null);
+            worrymatchRCD.moveToFirst();
+
+            // select * from Worrymatch where Worryno = '고민번호'
+
+            if (worrymatchRCD.getString(3).equals("F")) continue; // 답변이 오지 않은 경우, 다음 고민으로 넘어감.
+            else { // 답변이 작성된 경우
+
+                Cursor answerRCD = myDB.query("Answer", null, "Worryno = " + worryNo, null, null, null, null, null);
+                answerRCD.moveToFirst();
+
+                // select * from Answer where Worryno = '고민번호';
+                // 고민에 해당하는 답변의 정보를 불러옴
+
+                int answerNo = answerRCD.getInt(0);
+                String answerContent = answerRCD.getString(2);
+                String answerDate = answerRCD.getString(3);
+                String answerWriterId = answerRCD.getString(4);
+                String answerWriterNick = answerRCD.getString(5);
+
+                answers[i].setAnswerNo(answerNo);
+                answers[i].setWorryNo(worryNo);
+                answers[i].setContent(answerContent);
+                answers[i].setDate(answerDate);
+                answers[i].setWriterId(answerWriterId);
+                answers[i].setWriterNick(answerWriterNick);
+                answers[i].number = i;
+
+                Random random = new Random(); // 랜덤 객체 선언
+
+                Display display = getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                int width = size.x;  // 안드로이드 화면의 가로 길이
+                int height = size.y; // 안드로이드 화면의 세로 길이 (메뉴바를 제외한 길이)
+                // 1440x2800, 화면크기/6의 조건에서 좌측 상단의 x,y축 좌표는 (0, 125)
+
+                answers[i].setX(random.nextInt(width - width/6 + 1));              // X축 범위 : 0   ~ 화면 크기
+                answers[i].setY(random.nextInt(height - height/6 - 124) + 125);    // Y축 범위 : 125 ~ 화면 크기
+                answers[i].setLayoutParams(new DrawerLayout.LayoutParams(width/6, height/6));
+
+                CoordinatorLayout cLayout = (CoordinatorLayout)findViewById(R.id.coordinator);
+                cLayout.addView(answers[i]);
+                answers[i].setOnClickListener(BottleListener);
+            }
         }
     }
 
@@ -128,7 +194,6 @@ public class HomeActivity extends AppCompatActivity
         @Override
         public void onClick(View v) {
             try {
-                Log.i("MagicShell", "고민의 배열번호 : " + ((Shell)v).number);
                 Intent WorryIntent = new Intent(HomeActivity.this, WorryActivity.class);
                 WorryIntent.putExtra("WorryNo", ((Shell)v).getWorryNo());
                 WorryIntent.putExtra("WorryContent", ((Shell)v).getContent());
@@ -140,6 +205,26 @@ public class HomeActivity extends AppCompatActivity
                 WorryIntent.putExtra("ID", getIntent().getStringExtra("ID"));                // 접속한 유저의 ID
                 WorryIntent.putExtra("NICKNAME", getIntent().getStringExtra("NICKNAME"));    // 접속한 유저의 NICKNAME
                 startActivityForResult(WorryIntent, 1500); // 고민보기 : 1500
+            } catch (Exception e) { Log.i("MagicShell", e.getMessage()); }
+        }
+    };
+
+    View.OnClickListener BottleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                Intent AnswerReadIntent = new Intent(HomeActivity.this, AnswerActivity.class);
+                AnswerReadIntent.putExtra("AnswerNo", ((Bottle)v).getAnswerNo());
+                AnswerReadIntent.putExtra("WorryNo", ((Bottle)v).getWorryNo());
+                AnswerReadIntent.putExtra("AnswerContent", ((Bottle)v).getContent());
+                AnswerReadIntent.putExtra("AnswerDate", ((Bottle)v).getDate());
+                AnswerReadIntent.putExtra("AnswerWriterId", ((Bottle)v).getWriterId());
+                AnswerReadIntent.putExtra("AnswerWriterNick", ((Bottle)v).getWriterNick());
+                AnswerReadIntent.putExtra("Number", ((Bottle)v).number);
+
+                AnswerReadIntent.putExtra("ID", getIntent().getStringExtra("ID"));                // 접속한 유저의 ID
+                AnswerReadIntent.putExtra("NICKNAME", getIntent().getStringExtra("NICKNAME"));    // 접속한 유저의 NICKNAME
+                startActivityForResult(AnswerReadIntent, 3000); // 답장보기 : 3000
             } catch (Exception e) { Log.i("MagicShell", e.getMessage()); }
         }
     };
@@ -212,7 +297,6 @@ public class HomeActivity extends AppCompatActivity
                 Toast.makeText(HomeActivity.this, "고민이 누군가에게 전달되었습니다..", Toast.LENGTH_LONG).show();
             } else if (requestCode == 1500) { // 답변을 작성하고 나와서 수행
 
-                Log.i("MagicShell", " " + data.getIntExtra("Number", -1));
                 CoordinatorLayout cLayout = (CoordinatorLayout)findViewById(R.id.coordinator);
                 cLayout.removeView(worries[data.getIntExtra("Number", -1)]);
                 Toast.makeText(HomeActivity.this, "소중한 답변이 전달되었습니다..", Toast.LENGTH_SHORT).show();

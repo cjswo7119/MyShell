@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".writeAnswer"></activity>
+        <activity android:name=".AnswerActivity"></activity>
+        <activity android:name=".writeAnswer" />
         <activity android:name=".writeWorry" />
         <activity android:name=".WorryActivity" />
         <activity android:name=".JoinActivity" />
