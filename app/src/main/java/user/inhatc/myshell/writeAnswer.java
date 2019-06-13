@@ -64,6 +64,8 @@ public class writeAnswer extends AppCompatActivity {
             strSQL = "Update Worrymatch Set Iswrited = 'T' Where Worryno = " + worryNo + ";";
             myDB.execSQL(strSQL);
 
+            // strSQL = "Update WorryBox Set ";
+
             setResult(RESULT_OK);
             finish();
         }

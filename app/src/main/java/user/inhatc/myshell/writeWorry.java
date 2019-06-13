@@ -129,12 +129,18 @@ public class writeWorry extends AppCompatActivity {
                 Cursor maxWorryNoRCD = myDB.query("Worry", new String[] {"MAX(Worryno)"}, null, null, null, null, null, null);
                 // select max(Worryno) from Worry; 고민 번호 중 가장 큰 값을 불러온다.
                 maxWorryNoRCD.moveToFirst();
+                String maxNo = maxWorryNoRCD.getString(0);
 
-                strSQL = "insert into Worrymatch(Worryno, Id, Iswrited) values(" + maxWorryNoRCD.getString(0) + ", '" + maxLastLoginUserID + "', 'F');";
+                strSQL = "insert into Worrymatch(Worryno, Id, Iswrited) values(" + maxNo + ", '" + maxLastLoginUserID + "', 'F');";
                 // 내부 DB(SQLite)를 사용시에는 문제가 되지 않을 부분이지만, 외부 DB로 구현 시 문제가 생길 가능성이 가장 다분한 코드.
                 // 코드의 수행 순서상 Worry 테이블에 고민을 넣자마자 알고리즘에 따른 유저에게 고민을 전송하기 때문에 (Worrymatch 테이블에 레코드 삽입)
                 // Worryno가 1씩 증가하는 Worry 테이블의 특성상 방금 작성한 고민번호와 매칭됨.
                 // 하지만 외부 DB로 구현 시에는 여러 명이 동시에 작성하면서 오류가 발생할 수 있음.
+                myDB.execSQL(strSQL);
+
+                strSQL = "insert into WorryBox(worryNo, worryWriterId, worryWriterNick, worryContent, worryDate)" +
+                        "values(" + maxNo + ", '" + getIntent().getStringExtra("ID") + "', '" + getIntent().getStringExtra("NICKNAME") +
+                        "', '" + Content + "', '" + nowDate + "');";
                 Log.i("MagicShell", strSQL);
                 myDB.execSQL(strSQL);
 

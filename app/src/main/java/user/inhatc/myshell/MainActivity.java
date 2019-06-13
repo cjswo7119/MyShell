@@ -77,9 +77,9 @@ public class MainActivity extends AppCompatActivity{
          * Iswrited : 작성유무 (T:답변작성완료, F:답변미작성)
          * */
 
-        myDB.execSQL("Create table if not exists WorryBox (boxNo Integer primary key autoincrement," +
+        myDB.execSQL("Create table if not exists WorryBox (boxNo Integer primary key autoincrement, " +
                 "worryNo Integer not null, worryWriterId Text not null, worryWriterNick Text not null, worryContent Text not null, worryDate Text not null," +
-                "answerNo Integer not null, answerWriterId Text not null, answerWriterNick Text not null, answerContent Text not null, answerDate Text not null);");
+                "answerNo Integer, answerWriterId Text, answerWriterNick Text, answerContent Text, answerDate Text);");
 
         /*
         * -WorryBox Table
