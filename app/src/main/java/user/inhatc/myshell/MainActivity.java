@@ -77,6 +77,19 @@ public class MainActivity extends AppCompatActivity{
          * Iswrited : 작성유무 (T:답변작성완료, F:답변미작성)
          * */
 
+        myDB.execSQL("Create table if not exists WorryBox (boxNo Integer primary key autoincrement," +
+                "worryNo Integer not null, worryWriterId Text not null, worryWriterNick Text not null, worryContent Text not null, worryDate Text not null," +
+                "answerNo Integer not null, answerWriterId Text not null, answerWriterNick Text not null, answerContent Text not null, answerDate Text not null);");
+
+        /*
+        * -WorryBox Table
+        * boxNo : 상자 번호
+        * worryNo : 고민 번호, worryWriterId : 고민 작성자 ID, worryWriterNick : 고민 작성자 별명
+        * worryContent : 고민 내용, worryDate : 고민 작성 날짜
+        * answerNo : 답변 번호, answerWriterId : 답변 작성자 ID, answerWriterNick : 답변작 성자 별명
+        * answerContent : 답변 내용, answerDate : 답변 작성 날짜
+        * */
+
         Button btn_join = (Button)findViewById(R.id.btn_join);
         Button btn_login = (Button)findViewById(R.id.btn_login);
         btn_join.setOnClickListener(join_listener);
