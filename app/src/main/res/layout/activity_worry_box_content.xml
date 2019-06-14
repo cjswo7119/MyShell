@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".WorryBoxContent"
+    android:background="@drawable/background">w
+
+    <TextView
+        android:id="@+id/worryBoxTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="monospace"
+        android:gravity="center_horizontal"
+        android:text="언제 작성된 고민..."
+        android:textColor="@android:color/background_light"
+        android:textSize="24dp" />
+
+    <LinearLayout
+        android:id="@+id/boxLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@id/worryBoxTitle"
+        android:layout_above="@id/btn_worryBoxContentCancel">
+
+        <TextView
+            android:id="@+id/wContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@android:color/background_light"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/aContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@android:color/background_light"
+            android:text="" />
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/btn_worryBoxContentCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:text="돌아가기" />
+
+</RelativeLayout>
