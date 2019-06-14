@@ -137,7 +137,7 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
                                 +userNickName.getText().toString()+"', "+Integer.parseInt(date)+", '"+userEmail.getText().toString()+"',0,"+"'"+current+"');";
                         myDB.execSQL(sql);
 
-                        Toast.makeText(JoinActivity.this, sql,Toast.LENGTH_LONG).show();
+                        Toast.makeText(JoinActivity.this, "가입해주셔서 감사합니다!",Toast.LENGTH_LONG).show();
                         if(myDB != null) myDB.close();
                         dialog.dismiss();
                         onBackPressed();
@@ -157,6 +157,7 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        //아이디 검사
         if(userID.getText().toString().length() < 2) {
             joinError.setText("아이디는 2글자 이상 15자 미만입니다.");
             return;
@@ -170,7 +171,7 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             }
         }
-        String security;
+        //비밀번호 검사
         int pwCheck=0, pwLow=0, pwNum=0, pwUpp=0, pwSym=0;
         String[] userpw = userPassword.getText().toString().split("");
         if(userPassword.getText().toString().length() < 8) {
@@ -179,16 +180,7 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }else {
             for(int i=0; i<userPassword.getText().toString().length(); i++){
-                if(isLower(userpw[i])){         //소무자가 포함된 경우
-                    pwLow=8;
-                }else if(isNumber(userpw[i])){  //숫자가 포한된 경우
-                    pwNum=4;
-                }else if(isUpper(userpw[i])){   //대문자가 포함된 경우
-                    pwUpp=2;
-                }else if(isSymbol(userpw[i])){  //특수문자가 포함된 경우
-                    pwSym=1;
-                }
-                pwCheck=pwLow+pwNum+pwUpp+pwSym; //보안등급 합산
+
                 if(isLower(userPassword.getText().toString())) { //소문자 또는 숫자로만 이루어진 경우
                     joinError.setText("비밀번호는 소문자와 숫자가 포함되어야 합니다.");
                     return;
@@ -199,10 +191,12 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
+        //비밀번호 입력 검사
         if(!userPassword.getText().toString().equals(userPWCheck.getText().toString())) {
             joinError.setText("입력하신 비밀번호와 일치하지 않습니다.");
             return;
         }
+        //성명 검사
         if(userName.getText().toString().length() < 2) {
             joinError.setText("성명은 2자 이상입니다.");
             return;
@@ -211,10 +205,12 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
             joinError.setText("성명은 한글만 입력 가능합니다.");
             return;
         }
+        //닉네임 검사
         if(userNickName.getText().toString().length() < 5){
             joinError.setText("닉네임은 5자 이상입니다.");
             return;
         }
+        //생년월일 검사
         Date today = new Date(); //오늘 날짜
         date=birthYear.getSelectedItem().toString()+ String.format("%02d",birthMonth.getSelectedItem())+String.format("%02d",birthDay.getSelectedItem());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");  //값을 비교하기 위해 위의 선언한 date의 형식과 같게 맞추기 위해 포맷형식(yyyymmdd)지정.
