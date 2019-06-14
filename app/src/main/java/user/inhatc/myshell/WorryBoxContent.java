@@ -26,7 +26,9 @@ public class WorryBoxContent extends AppCompatActivity {
 
         if (getIntent() != null) {
             dbRecord = getIntent().getStringExtra("record");
-            datas = dbRecord.split(" ");
+            Log.i("MagicShell", dbRecord);
+            datas = dbRecord.split("|");
+            Log.i("MagicShell", datas[0] + " " + datas[1] + " " + datas[2] + " " + datas[31] + " " + datas[4] + " " + datas[5]);
 
             worryWriterNick = datas[3];
             worryContent = datas[4];

@@ -36,7 +36,6 @@ public class WorryBox extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
         myDB = this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
         String[] args = {getIntent().getStringExtra("ID"), getIntent().getStringExtra("ID")};
         Cursor allRCD = myDB.query("WorryBox", null, "worryWriterId=? or answerWriterId=?", args, null, null, null, null);
@@ -49,10 +48,10 @@ public class WorryBox extends AppCompatActivity {
                 do {
                     String strRecord = allRCD.getString(5) + "에 작성된 고민...";
                     aryMBRList.add(strRecord);
-                    dbData[i] = allRCD.getString(0) + " " + allRCD.getString(1) + " " + allRCD.getString(2) + " " +
-                            allRCD.getString(3) + " " + allRCD.getString(4) + " " + allRCD.getString(5) + " " +
-                            allRCD.getString(6) + " " + allRCD.getString(7) + " " + allRCD.getString(8) + " " +
-                            allRCD.getString(9) + " " + allRCD.getString(10);
+                    dbData[i] = allRCD.getString(0) + "|" + allRCD.getString(1) + "|" + allRCD.getString(2) + "|" +
+                            allRCD.getString(3) + "|" + allRCD.getString(4) + "|" + allRCD.getString(5) + "|" +
+                            allRCD.getString(6) + "|" + allRCD.getString(7) + "|" + allRCD.getString(8) + "|" +
+                            allRCD.getString(9) + "|" + allRCD.getString(10);
                     i++;
                 } while(allRCD.moveToNext());
             }

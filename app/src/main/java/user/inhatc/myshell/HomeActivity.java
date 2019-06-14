@@ -269,9 +269,13 @@ public class HomeActivity extends AppCompatActivity
             writeIntent.putExtra("NICKNAME", getIntent().getStringExtra("NICKNAME"));
             startActivityForResult(writeIntent, 1000); // 고민작성 : 1000
         } else if (id == R.id.nav_myWorries) {
-            Intent worryBoxIntent = new Intent(HomeActivity.this, WorryBox.class);
-            worryBoxIntent.putExtra("ID", getIntent().getStringExtra("ID"));
-            startActivity(worryBoxIntent);
+            try {
+                Intent worryBoxIntent = new Intent(HomeActivity.this, WorryBox.class);
+                worryBoxIntent.putExtra("ID", getIntent().getStringExtra("ID"));
+                startActivity(worryBoxIntent);
+            } catch (Exception e) {
+                Log.i("MagicShell", e.getMessage());
+            }
         } else if (id == R.id.nav_profile) {
             Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
             profileIntent.putExtra("ID",getIntent().getStringExtra("ID"));

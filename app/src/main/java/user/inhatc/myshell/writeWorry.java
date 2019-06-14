@@ -55,7 +55,7 @@ public class writeWorry extends AppCompatActivity {
                         getIntent().getStringExtra("NICKNAME") + "', '" + getIntent().getStringExtra("ID") + "');"; // 고민 테이블에 값을 넣는 SQL문
                 myDB.execSQL(strSQL);
 
-                Cursor minCntWorryRCD = myDB.query("User", new String[] {"MIN(CntWorry)"}, null, null, null, null, null, null);
+                Cursor minCntWorryRCD = myDB.query("User", new String[] {"MIN(CntWorry)"}, "Id != '" + getIntent().getStringExtra("ID") + "'", null, null, null, null, null);
                 // select min(cntworry) from user;
                 minCntWorryRCD.moveToFirst();
                 int minCntWorry = minCntWorryRCD.getInt(0); // 가장 적게 받은 고민의 수
@@ -118,8 +118,9 @@ public class writeWorry extends AppCompatActivity {
                 String strMaxDate = maxDate.get(maxDate.YEAR) + "-" + (maxDate.get(maxDate.MONTH)+1) + "-" + maxDate.get(maxDate.DATE); // 가장 최근 접속일을 DB에 넣기 좋게 String 타입으로 변환.
                 Log.i("MagicShell", "가장 적게 받은 유저들 중 가장 최근 접속일 : " + strMaxDate);
 
-                args[0] = strMaxDate; args[1] = Integer.toString(minCntWorry); // Cursor의 조건문에 넣기 위한 String 배열.
-                Cursor maxLastLoginUserRCD = myDB.query("User", null, "Lastlogin = ? and Cntworry = ?", args, null, null, null, null); // select * from user where lastlogin = '날짜' and cntworry = '숫자';
+                String[] tempargs = new String[3];
+                tempargs[0] = strMaxDate; tempargs[1] = Integer.toString(minCntWorry); tempargs[2] = getIntent().getStringExtra("ID"); // Cursor의 조건문에 넣기 위한 String 배열.
+                Cursor maxLastLoginUserRCD = myDB.query("User", null, "Lastlogin = ? and Cntworry = ? and Id != ?", tempargs, null, null, null, null); // select * from user where lastlogin = '날짜' and cntworry = '숫자';
                 // select * from user where Lastlogin = '가장 최근 접속일' and Cntworry = '가장 적게 받은 고민의 수';
                 // 가장 고민을 적게 받았고, 최근 접속일이 가장 최신인 유저를 불러온다.
 

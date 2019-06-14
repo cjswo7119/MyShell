@@ -13,7 +13,12 @@
         <activity android:name=".writeAnswer" />
         <activity android:name=".writeWorry" />
         <activity android:name=".WorryActivity" />
-        <activity android:name=".JoinActivity" />
+        <activity android:name=".JoinActivity" />"
+        <activity android:name=".WorryBox" />
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".WorryBoxContent" />
+
+
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
