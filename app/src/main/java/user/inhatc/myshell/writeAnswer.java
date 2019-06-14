@@ -60,7 +60,14 @@ public class writeAnswer extends AppCompatActivity {
             String strSQL = "Insert into Answer(Worryno, Content, Date, WriterId, WriterNick) values(" + worryNo + ", '" + edtAnswerContent.getText().toString() +
                     "', '" + nowDate + "', '" + writerId + "', '" + writerNick + "');";
             myDB.execSQL(strSQL);
-
+            Cursor tempRCD = myDB.query("Answer", new String[] {"Max(AnswerNo)"}, null, null, null, null, null, null);
+            tempRCD.moveToFirst();
+            int temp = tempRCD.getInt(0);
+            strSQL = "Update WorryBox Set answerNo = " + temp + ", answerWriterId = '" + writerId + "', answerWriterNick = '" +
+                    writerNick + "', answerContent = '" + edtAnswerContent.getText().toString() + "', answerDate = '" + nowDate + "' Where worryNo = " + worryNo + ";";
+            Log.i("MagicShell", strSQL);
+            myDB.execSQL(strSQL);
+            
             strSQL = "Update Worrymatch Set Iswrited = 'T' Where Worryno = " + worryNo + ";";
             myDB.execSQL(strSQL);
 
