@@ -269,7 +269,9 @@ public class HomeActivity extends AppCompatActivity
             writeIntent.putExtra("NICKNAME", getIntent().getStringExtra("NICKNAME"));
             startActivityForResult(writeIntent, 1000); // 고민작성 : 1000
         } else if (id == R.id.nav_myWorries) {
-
+            Intent worryBoxIntent = new Intent(HomeActivity.this, WorryBox.class);
+            worryBoxIntent.putExtra("ID", getIntent().getStringExtra("ID"));
+            startActivity(worryBoxIntent);
         } else if (id == R.id.nav_profile) {
 
         } else if (id == R.id.nav_logout) {
