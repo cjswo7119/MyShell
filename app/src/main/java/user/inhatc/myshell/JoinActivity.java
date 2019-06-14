@@ -1,5 +1,9 @@
 package user.inhatc.myshell;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -51,9 +55,10 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
     private Button joinBack;
     private Button joinUser;
 
+    String date = "";  //데이터베이스에 저장될 사용자 생년월일
     Calendar cal = Calendar.getInstance();    //현재시간 가져오기
     int year = cal.get(cal.YEAR);           //현재시간의 년도 가져오기
-    int month = cal.get(cal.MONTH)+1;         //현재시간의 월 가져오기
+    int month = cal.get(cal.MONTH)+1;       //현재시간의 월 가져오기
     int day = cal.get(cal.DATE);            //현재시간의 일 가져오기
 
     String current = Integer.toString(year)+"-"+Integer.toString(month)+"-"+Integer.toString(day);
@@ -98,6 +103,56 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
         joinError = (TextView) findViewById(R.id.lblError);
         joinUser = (Button)findViewById(R.id.btnJoin);
         joinUser.setOnClickListener(this);
+        joinBack = (Button)findViewById(R.id.btnBack);
+        joinBack.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+    }
+
+    @Override
+    protected void onPrepareDialog(int id, Dialog dialog) {
+        super.onPrepareDialog(id, dialog);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+
+        super.onCreateDialog(id);
+        AlertDialog dlgAlert;
+        dlgAlert = new AlertDialog.Builder(this)
+                .setTitle("회원가입")
+                .setMessage("회원가입을 진행하시겠습니까?")
+                .setView(null)
+                //확인 버튼
+                .setPositiveButton("확인", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        myDB = JoinActivity.this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
+
+                        //사용자 추가
+                        String sql = "";
+                        sql="Insert into User " +
+                                "values ('"+userID.getText().toString()+"', '"+userPassword.getText().toString()+"', '"+userName.getText().toString()+"', '"
+                                +userNickName.getText().toString()+"', "+Integer.parseInt(date)+", '"+userEmail.getText().toString()+"',0,"+"'"+current+"');";
+                        myDB.execSQL(sql);
+
+                        Toast.makeText(JoinActivity.this, sql,Toast.LENGTH_LONG).show();
+                        if(myDB != null) myDB.close();
+                        dialog.dismiss();
+                        onBackPressed();
+                    }
+                })
+                //취소 버튼
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    public void onClick(
+                            DialogInterface dialog, int id) {
+                        // 다이얼로그를 취소한다
+                        dialog.cancel();
+                    }
+                })
+                .create();
+        return dlgAlert;
     }
 
     @Override
@@ -161,12 +216,12 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
         Date today = new Date(); //오늘 날짜
-        String date=birthYear.getSelectedItem().toString()+ String.format("%02d",birthMonth.getSelectedItem())+String.format("%02d",birthDay.getSelectedItem());
+        date=birthYear.getSelectedItem().toString()+ String.format("%02d",birthMonth.getSelectedItem())+String.format("%02d",birthDay.getSelectedItem());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");  //값을 비교하기 위해 위의 선언한 date의 형식과 같게 맞추기 위해 포맷형식(yyyymmdd)지정.
         String strToday = sdf.format(today).toString(); //현재날짜정보(cld)를 위에서 지정한 포맷형식(yyyymmdd)으로 문자열 strToday생성.
 
         if(Integer.parseInt(date)>Integer.parseInt(strToday)) {  //현재 날짜보다 미래인 경우 에러메세지 출력.
-            joinError.setText("미래에서 오셨군요^^");
+                joinError.setText("미래에서 오셨군요^^");
             return;
         }
         if(!checkEmail(userEmail.getText().toString())){
@@ -174,11 +229,18 @@ public class JoinActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
         myDB = this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
-        String sql="Insert into User " +
-                "values ('"+userID.getText().toString()+"', '"+userPassword.getText().toString()+"', '"+userName.getText().toString()+"', '"
-                +userNickName.getText().toString()+"', "+Integer.parseInt(date)+", '"+userEmail.getText().toString()+"',0,"+"'"+current+"');";
-        myDB.execSQL(sql);
-        Toast.makeText(this, sql,Toast.LENGTH_LONG).show();
+
+        //중복아이디 검사
+        String sql = "Select Id from User where Id = '"+userID.getText().toString()+"'";
+        Cursor cursor = myDB.rawQuery(sql,null);
+        if(!cursor.moveToFirst());  //가져온 레코드가 없으면 null 즉 아이디 중복이 아님.
+        else {
+            joinError.setText("아이디가 중복입니다.");
+            return;
+        }
+
+        showDialog(0); //회원가입 진행 다이얼로그 뛰우기
+
         if(myDB != null) myDB.close();
     }
     public static boolean checkEmail(String email){

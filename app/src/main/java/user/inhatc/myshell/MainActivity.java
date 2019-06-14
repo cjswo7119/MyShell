@@ -106,11 +106,11 @@ public class MainActivity extends AppCompatActivity{
             if (!idRCD.moveToFirst()) { // 아이디가 존재하지 않다면
                 Toast.makeText(MainActivity.this, "아이디가 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
             } else { // 아이디가 존재하는 경우
-                EditText edt_password = (EditText)findViewById(R.id.edt_password);
+                EditText edt_password = (EditText) findViewById(R.id.edt_password);
                 String Password = edt_password.getText().toString();
                 String Nickname = idRCD.getString(3);
 
-                if(idRCD.getString(1).equals(Password)) { // 패스워드 일치
+                if (idRCD.getString(1).equals(Password)) { // 패스워드 일치
                     Calendar cal = Calendar.getInstance();  // 현재시간 가져오기
                     cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
                     int year = cal.get(cal.YEAR);           // 현재 년도
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity{
                     Intent loginIntent = new Intent(MainActivity.this, HomeActivity.class);
                     loginIntent.putExtra("ID", Id); // 아이디 전달
                     loginIntent.putExtra("NICKNAME", Nickname);
-                    startActivityForResult(loginIntent,1);
+                    startActivityForResult(loginIntent, 1);
                     finish();
 
                     idRCD.close();
@@ -130,7 +130,6 @@ public class MainActivity extends AppCompatActivity{
                 } else { // 패스워드 불일치
                     Toast.makeText(MainActivity.this, "패스워드가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                 }
-
             }
         }
     };
