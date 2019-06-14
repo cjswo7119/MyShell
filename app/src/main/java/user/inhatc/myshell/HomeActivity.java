@@ -296,10 +296,13 @@ public class HomeActivity extends AppCompatActivity
             if (requestCode == 1000) { // 고민을 작성하고 나와서 수행
                 Toast.makeText(HomeActivity.this, "고민이 누군가에게 전달되었습니다..", Toast.LENGTH_LONG).show();
             } else if (requestCode == 1500) { // 답변을 작성하고 나와서 수행
-
                 CoordinatorLayout cLayout = (CoordinatorLayout)findViewById(R.id.coordinator);
                 cLayout.removeView(worries[data.getIntExtra("Number", -1)]);
                 Toast.makeText(HomeActivity.this, "소중한 답변이 전달되었습니다..", Toast.LENGTH_SHORT).show();
+            } else if (requestCode == 3000) {
+                CoordinatorLayout cLayout = (CoordinatorLayout)findViewById(R.id.coordinator);
+                cLayout.removeView(answers[data.getIntExtra("Number", -1)]);
+                Toast.makeText(HomeActivity.this, "물병을 상자에 보관했습니다!", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(HomeActivity.this, "오류가 발생했습니다.", Toast.LENGTH_SHORT);
