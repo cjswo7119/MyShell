@@ -273,7 +273,9 @@ public class HomeActivity extends AppCompatActivity
             worryBoxIntent.putExtra("ID", getIntent().getStringExtra("ID"));
             startActivity(worryBoxIntent);
         } else if (id == R.id.nav_profile) {
-
+            Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
+            profileIntent.putExtra("ID",getIntent().getStringExtra("ID"));
+            startActivityForResult(profileIntent, 4000);
         } else if (id == R.id.nav_logout) {
             Intent logoutIntent = new Intent(HomeActivity.this, MainActivity.class);
             logoutIntent.putExtra("Logout", true);
