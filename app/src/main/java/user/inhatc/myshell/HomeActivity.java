@@ -263,12 +263,12 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_write) {
+        if (id == R.id.nav_write) { // 고민 작성
             Intent writeIntent = new Intent(HomeActivity.this, writeWorry.class);
             writeIntent.putExtra("ID", getIntent().getStringExtra("ID"));
             writeIntent.putExtra("NICKNAME", getIntent().getStringExtra("NICKNAME"));
             startActivityForResult(writeIntent, 1000); // 고민작성 : 1000
-        } else if (id == R.id.nav_myWorries) {
+        } else if (id == R.id.nav_myWorries) { // 내 고민 목록
             try {
                 Intent worryBoxIntent = new Intent(HomeActivity.this, WorryBox.class);
                 worryBoxIntent.putExtra("ID", getIntent().getStringExtra("ID"));
@@ -276,15 +276,15 @@ public class HomeActivity extends AppCompatActivity
             } catch (Exception e) {
                 Log.i("MagicShell", e.getMessage());
             }
-        } else if (id == R.id.nav_profile) {
+        } else if (id == R.id.nav_profile) { // 개인정보변경
             Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
             profileIntent.putExtra("ID",getIntent().getStringExtra("ID"));
             startActivityForResult(profileIntent, 4000);
-        } else if (id == R.id.nav_logout) {
+        } else if (id == R.id.nav_logout) { // 로그아웃
             Intent logoutIntent = new Intent(HomeActivity.this, MainActivity.class);
             logoutIntent.putExtra("Logout", true);
             startActivity(logoutIntent);
-        } else if (id == R.id.nav_closeAccount) {
+        } else if (id == R.id.nav_closeAccount) { // 회원탈퇴
 
         }
 

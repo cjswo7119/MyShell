@@ -22,52 +22,59 @@ public class WorryBox extends AppCompatActivity {
     ArrayAdapter<String> adtMembers;
     ListView lstView;
     SQLiteDatabase myDB;
-    String[] dbData;
+    String[][] dbData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_worry_box);
+        try {
+            Button btn_toMain = (Button) findViewById(R.id.btn_boxCancel);
+            btn_toMain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onBackPressed();
+                }
+            });
+            myDB = this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
+            String[] args = {getIntent().getStringExtra("ID"), getIntent().getStringExtra("ID")};
+            Cursor allRCD = myDB.query("WorryBox", null, "worryWriterId=? or answerWriterId=?", args, null, null, null, null);
 
-        Button btn_toMain = (Button)findViewById(R.id.btn_boxCancel);
-        btn_toMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
+            aryMBRList = new ArrayList<String>();
+            dbData = new String[allRCD.getCount()][11];
+            if (allRCD != null) {
+                if (allRCD.moveToFirst()) {
+                    int i = 0;
+                    do {
+                        String strRecord = allRCD.getString(5) + "에 작성된 고민...";
+                        aryMBRList.add(strRecord);
+                        for (int j = 0; j < 11; j++) {
+                            dbData[i][j] = allRCD.getString(j);
+                        }
+                        i++;
+                    } while (allRCD.moveToNext());
+                }
             }
-        });
-        myDB = this.openOrCreateDatabase("MagicShell", MODE_PRIVATE, null);
-        String[] args = {getIntent().getStringExtra("ID"), getIntent().getStringExtra("ID")};
-        Cursor allRCD = myDB.query("WorryBox", null, "worryWriterId=? or answerWriterId=?", args, null, null, null, null);
+            adtMembers = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice, aryMBRList);
 
-        aryMBRList = new ArrayList<String>();
-        dbData = new String[allRCD.getCount()];
-        if (allRCD != null) {
-            if(allRCD.moveToFirst()) {
-                int i=0;
-                do {
-                    String strRecord = allRCD.getString(5) + "에 작성된 고민...";
-                    aryMBRList.add(strRecord);
-                    dbData[i] = allRCD.getString(0) + "|" + allRCD.getString(1) + "|" + allRCD.getString(2) + "|" +
-                            allRCD.getString(3) + "|" + allRCD.getString(4) + "|" + allRCD.getString(5) + "|" +
-                            allRCD.getString(6) + "|" + allRCD.getString(7) + "|" + allRCD.getString(8) + "|" +
-                            allRCD.getString(9) + "|" + allRCD.getString(10);
-                    i++;
-                } while(allRCD.moveToNext());
-            }
+            lstView = (ListView) findViewById(R.id.worrylstView);
+            lstView.setAdapter(adtMembers);
+            lstView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            lstView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                    Intent wbContentIntent = new Intent(WorryBox.this, WorryBoxContent.class);
+                    wbContentIntent.putExtra("WorryWriterNick", dbData[pos][3]);
+                    wbContentIntent.putExtra("WorryContent", dbData[pos][4]);
+                    wbContentIntent.putExtra("WorryDate", dbData[pos][5]);
+                    wbContentIntent.putExtra("AnswerWriterNick", dbData[pos][8]);
+                    wbContentIntent.putExtra("AnswerContent", dbData[pos][9]);
+                    wbContentIntent.putExtra("AnswerDate", dbData[pos][10]);
+                    startActivity(wbContentIntent);
+                }
+            });
+        } catch (Exception e) {
+            Log.i("MagicShell", e.getMessage());
         }
-        adtMembers = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice, aryMBRList);
-
-        lstView = (ListView)findViewById(R.id.worrylstView);
-        lstView.setAdapter(adtMembers);
-        lstView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        lstView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                Intent wbContentIntent = new Intent(WorryBox.this, WorryBoxContent.class);
-                wbContentIntent.putExtra("record", dbData[pos]);
-                startActivity(wbContentIntent);
-            }
-        });
     }
 }
